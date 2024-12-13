@@ -1,0 +1,6 @@
+@GudumholmIdærtAPI_HostAddress = http://localhost:5157
+
+GET {{GudumholmIdærtAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
