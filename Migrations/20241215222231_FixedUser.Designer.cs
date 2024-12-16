@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GudumholmIdærtAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241215222231_FixedUser")]
+    partial class FixedUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -57,50 +60,7 @@ namespace GudumholmIdærtAPI.Migrations
                     b.ToTable("Houses");
                 });
 
-            modelBuilder.Entity("Member", b =>
-                {
-                    b.Property<int>("MemberId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MemberId"));
-
-                    b.Property<DateTime>("Birthday")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CprNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("HouseId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("MemberType")
-                        .IsRequired()
-                        .HasMaxLength(13)
-                        .HasColumnType("nvarchar(13)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("ParentMemberMemberId")
-                        .HasColumnType("int");
-
-                    b.HasKey("MemberId");
-
-                    b.HasIndex("HouseId");
-
-                    b.HasIndex("ParentMemberMemberId");
-
-                    b.ToTable("Members", (string)null);
-
-                    b.HasDiscriminator<string>("MemberType").HasValue("Member");
-
-                    b.UseTphMappingStrategy();
-                });
-
-            modelBuilder.Entity("Sport", b =>
+            modelBuilder.Entity("GudumholmIdærtAPI.Models.Sport", b =>
                 {
                     b.Property<int>("SportId")
                         .ValueGeneratedOnAdd()
@@ -120,6 +80,41 @@ namespace GudumholmIdærtAPI.Migrations
                     b.ToTable("Sports");
                 });
 
+            modelBuilder.Entity("Member", b =>
+                {
+                    b.Property<int>("MemberId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MemberId"));
+
+                    b.Property<string>("CprNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("HouseId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("MemberType")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("nvarchar(13)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("MemberId");
+
+                    b.HasIndex("HouseId");
+
+                    b.ToTable("Members", (string)null);
+
+                    b.HasDiscriminator<string>("MemberType").HasValue("Member");
+
+                    b.UseTphMappingStrategy();
+                });
+
             modelBuilder.Entity("ActiveMember", b =>
                 {
                     b.HasBaseType("Member");
@@ -131,17 +126,20 @@ namespace GudumholmIdærtAPI.Migrations
                 {
                     b.HasBaseType("Member");
 
-                    b.Property<int?>("SportId")
-                        .HasColumnType("int");
-
-                    b.HasIndex("SportId");
+                    b.Property<string>("SportsName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasDiscriminator().HasValue("Bestyrelse");
                 });
 
-            modelBuilder.Entity("ParentMember", b =>
+            modelBuilder.Entity("ParantMember", b =>
                 {
                     b.HasBaseType("Member");
+
+                    b.Property<string>("AmountOfChildren")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasDiscriminator().HasValue("Parant");
                 });
@@ -164,7 +162,7 @@ namespace GudumholmIdærtAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Sport", "Sport")
+                    b.HasOne("GudumholmIdærtAPI.Models.Sport", "Sport")
                         .WithMany("ActiveMemberSports")
                         .HasForeignKey("SportId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -183,22 +181,7 @@ namespace GudumholmIdærtAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ParentMember", null)
-                        .WithMany("Children")
-                        .HasForeignKey("ParentMemberMemberId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.Navigation("House");
-                });
-
-            modelBuilder.Entity("BestyrelseMember", b =>
-                {
-                    b.HasOne("Sport", "Sport")
-                        .WithMany()
-                        .HasForeignKey("SportId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Sport");
                 });
 
             modelBuilder.Entity("GudumholmIdærtAPI.Models.House", b =>
@@ -206,7 +189,7 @@ namespace GudumholmIdærtAPI.Migrations
                     b.Navigation("Members");
                 });
 
-            modelBuilder.Entity("Sport", b =>
+            modelBuilder.Entity("GudumholmIdærtAPI.Models.Sport", b =>
                 {
                     b.Navigation("ActiveMemberSports");
                 });
@@ -214,11 +197,6 @@ namespace GudumholmIdærtAPI.Migrations
             modelBuilder.Entity("ActiveMember", b =>
                 {
                     b.Navigation("ActiveMemberSports");
-                });
-
-            modelBuilder.Entity("ParentMember", b =>
-                {
-                    b.Navigation("Children");
                 });
 #pragma warning restore 612, 618
         }

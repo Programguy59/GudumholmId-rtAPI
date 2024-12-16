@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GudumholmIdærtAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241216012304_FixedUser5")]
+    partial class FixedUser5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -84,14 +87,9 @@ namespace GudumholmIdærtAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ParentMemberMemberId")
-                        .HasColumnType("int");
-
                     b.HasKey("MemberId");
 
                     b.HasIndex("HouseId");
-
-                    b.HasIndex("ParentMemberMemberId");
 
                     b.ToTable("Members", (string)null);
 
@@ -139,9 +137,13 @@ namespace GudumholmIdærtAPI.Migrations
                     b.HasDiscriminator().HasValue("Bestyrelse");
                 });
 
-            modelBuilder.Entity("ParentMember", b =>
+            modelBuilder.Entity("ParantMember", b =>
                 {
                     b.HasBaseType("Member");
+
+                    b.Property<string>("AmountOfChildren")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasDiscriminator().HasValue("Parant");
                 });
@@ -183,11 +185,6 @@ namespace GudumholmIdærtAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ParentMember", null)
-                        .WithMany("Children")
-                        .HasForeignKey("ParentMemberMemberId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.Navigation("House");
                 });
 
@@ -214,11 +211,6 @@ namespace GudumholmIdærtAPI.Migrations
             modelBuilder.Entity("ActiveMember", b =>
                 {
                     b.Navigation("ActiveMemberSports");
-                });
-
-            modelBuilder.Entity("ParentMember", b =>
-                {
-                    b.Navigation("Children");
                 });
 #pragma warning restore 612, 618
         }
