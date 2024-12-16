@@ -17,7 +17,7 @@ public class BestyrelseMemberController : ControllerBase
     {
         var members = await _context.Members
             .OfType<BestyrelseMember>()
-            .Include(m => m.Sport) // Include associated sport
+            .Include(m => m.Sport) 
             .ToListAsync();
 
         return Ok(members);

@@ -160,10 +160,9 @@ public class ParentMemberController : ControllerBase
     // DTO for posting a child ID
     public class AddChildRequest
     {
-        public int ChildId { get; set; } // The ID of the child to be added
+        public int ChildId { get; set; }
     }
 
-    // Remove a child from a parent member
     [HttpDelete("{parentId}/children/{childId}")]
     public async Task<IActionResult> RemoveChildFromParent(int parentId, int childId)
     {
@@ -184,7 +183,6 @@ public class ParentMemberController : ControllerBase
             return NotFound("Child member not found.");
         }
 
-        // Remove the child from the parent
         parent.Children.Remove(child);
         await _context.SaveChangesAsync();
 

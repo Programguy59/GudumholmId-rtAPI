@@ -31,9 +31,9 @@ public class ActiveMemberController : ControllerBase
             MemberId = am.MemberId,
             Name = am.Name,
             CprNumber = am.CprNumber,
-            Birthday = am.Birthday, // Include Birthday
+            Birthday = am.Birthday, 
             HouseId = am.HouseId,
-            HouseName = am.House.HouseName, // Assuming you want the House Name
+            HouseName = am.House.HouseName,
             Sports = am.ActiveMemberSports.Select(ams => new SportDto
             {
                 SportName = ams.Sport.SportName,
@@ -64,7 +64,7 @@ public class ActiveMemberController : ControllerBase
             MemberId = activeMember.MemberId,
             Name = activeMember.Name,
             CprNumber = activeMember.CprNumber,
-            Birthday = activeMember.Birthday, // Include Birthday
+            Birthday = activeMember.Birthday,
             HouseId = activeMember.HouseId,
             HouseName = activeMember.House.HouseName,
             Sports = activeMember.ActiveMemberSports.Select(ams => new SportDto
@@ -86,14 +86,12 @@ public class ActiveMemberController : ControllerBase
             return BadRequest("Invalid member data.");
         }
 
-        // Ensure the House exists based on the HouseId provided
         var house = await _context.Houses.FindAsync(activeMemberCreateDto.HouseId);
         if (house == null)
         {
             return BadRequest("House not found.");
         }
 
-        // Create the ActiveMember
         var activeMember = new ActiveMember
         {
             Name = activeMemberCreateDto.Name,
@@ -103,9 +101,8 @@ public class ActiveMemberController : ControllerBase
         };
 
         _context.ActiveMembers.Add(activeMember);
-        await _context.SaveChangesAsync(); // Save ActiveMember first to get its ID
+        await _context.SaveChangesAsync(); 
 
-        // Now handle the Sports
         if (activeMemberCreateDto.SportNames != null && activeMemberCreateDto.SportNames.Any())
         {
             foreach (var sportName in activeMemberCreateDto.SportNames)
@@ -140,7 +137,7 @@ public class ActiveMemberController : ControllerBase
             Sports = activeMemberCreateDto.SportNames.Select(sportName => new SportDto
             {
                 SportName = sportName,
-                YearlyFee = 100 // Default yearly fee or fetch from DB if needed
+                YearlyFee = 100
             }).ToList()
         };
 

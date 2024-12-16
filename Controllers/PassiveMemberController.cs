@@ -44,7 +44,6 @@ namespace GudumholmIdærtAPI.Controllers
             return Ok($"This member has been passive for {timeSincePassive.Days} days.");
         }
 
-        // Get a specific passive member by ID
         [HttpGet("{id}")]
         public async Task<ActionResult<PassiveMember>> GetPassiveMember(int id)
         {
@@ -66,14 +65,12 @@ namespace GudumholmIdærtAPI.Controllers
                 return BadRequest("Invalid member data.");
             }
 
-            // Ensure the House exists based on the HouseId provided
             var house = await _context.Houses.FindAsync(passiveMemberDto.HouseId);
             if (house == null)
             {
                 return BadRequest("House not found.");
             }
 
-            // Create a new PassiveMember instance
             var passiveMember = new PassiveMember
             {
                 Name = passiveMemberDto.Name,
@@ -83,13 +80,10 @@ namespace GudumholmIdærtAPI.Controllers
                 DateBecamePassive = DateTime.Now
             };
 
-            // Add the new passive member to the DbContext
             _context.Members.Add(passiveMember);
 
-            // Save changes to the database
             await _context.SaveChangesAsync();
 
-            // Return the newly created passive member
             return CreatedAtAction(nameof(GetPassiveMember), new { id = passiveMember.MemberId }, passiveMember);
         }
 
@@ -110,7 +104,6 @@ namespace GudumholmIdærtAPI.Controllers
             return NoContent();
         }
 
-        // Helper: Check if a passive member exists
         private bool PassiveMemberExists(int id)
         {
             return _context.Members.OfType<PassiveMember>().Any(pm => pm.MemberId == id);

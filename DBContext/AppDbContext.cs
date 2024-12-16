@@ -34,11 +34,9 @@ public class AppDbContext : DbContext
            .WithMany(h => h.Members)
            .HasForeignKey(m => m.HouseId);
 
-        // Ensure base Member cannot be instantiated directly
         modelBuilder.Entity<Member>().UseTphMappingStrategy();
         modelBuilder.Entity<Member>().ToTable("Members");
 
-        // Configure the Members table to enforce the MemberType
         modelBuilder.Entity<Member>()
             .Property<string>("MemberType")
             .IsRequired();

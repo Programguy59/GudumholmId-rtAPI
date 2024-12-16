@@ -16,16 +16,13 @@ public class MemberController : ControllerBase
         _context = context;
     }
 
-    // Get all members with their basic attributes and type
     [HttpGet]
     public async Task<ActionResult<IEnumerable<MemberDto>>> GetAllMembers()
     {
-        // Retrieve all members from the database
         var members = await _context.Members
-            .Include(m => m.House)  // Include House information
+            .Include(m => m.House)  
             .ToListAsync();
 
-        // Convert the list of members into a list of MemberDto
         var memberDtos = members.Select(m => new MemberDto
         {
             MemberId = m.MemberId,
@@ -33,7 +30,7 @@ public class MemberController : ControllerBase
             CprNumber = m.CprNumber,
             Birthday = m.Birthday,
             HouseId = m.HouseId,
-            MemberType = m.GetType().Name  // Dynamically get the type of the member (ActiveMember, PassiveMember, etc.)
+            MemberType = m.GetType().Name 
         }).ToList();
 
         return Ok(memberDtos);
